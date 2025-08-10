@@ -1,0 +1,63 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Simple from "../../layouts/Simple.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import CopyrightNotice from "../../components/CopyrightNotice.astro";
+import { Temporal } from "temporal-polyfill";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("articles");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
+}
+type Props = CollectionEntry<"articles">;
+
+const post = Astro.props;
+const pubDate = Temporal.Instant.from(post.data.pubDate);
+const { Content } = await render(post);
+---
+
+<Simple title={post.data.title}>
+  <header>
+    <nav>
+      <a href="../">[index]</a>
+    </nav>
+    <hr />
+  </header>
+  <main>
+    <article>
+      <header>
+        <h1>{post.data.title}</h1>
+        <div>
+          Date: <FormattedDate date={pubDate} withTime />
+        </div>
+      </header>
+      <div class="content">
+        <Content />
+      </div>
+    </article>
+  </main>
+  <footer>
+    <hr />
+    <nav>
+      <a href="../">[index]</a>
+    </nav>
+    <p>
+      <CopyrightNotice pubDate={pubDate} />
+    </p>
+  </footer>
+</Simple>
+
+<style>
+  .content {
+    line-height: 1.8;
+
+    & :global(pre.astro-code) {
+      border: 1px solid #666;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+  }
+</style>

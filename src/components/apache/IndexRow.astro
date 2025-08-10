@@ -1,0 +1,48 @@
+---
+import fs from "node:fs/promises";
+import { Temporal } from "temporal-polyfill";
+import FormattedDate from "../FormattedDate.astro";
+
+interface Props {
+  name: string;
+  path: string;
+  lastModified?: Temporal.Instant;
+  filePath?: string;
+  description?: string;
+}
+
+const { name, path, lastModified, filePath, description } = Astro.props;
+
+const fileSize =
+  filePath !== undefined ? (await fs.stat(filePath)).size : undefined;
+
+function toHumanReadableSize(size?: number) {
+  if (size === undefined) {
+    return undefined;
+  }
+
+  const base = 1000;
+  if (size < base) {
+    return `${size}`;
+  }
+  if (size < base * base) {
+    return `${(size / base).toFixed(1)}K`;
+  }
+  if (size < base * base * base) {
+    return `${(size / (base * base)).toFixed(1)}M`;
+  }
+  return `${(size / (base * base * base)).toFixed(1)}G`;
+}
+---
+
+<tr>
+  <td>
+    <slot name="icon" />
+  </td>
+  <td><a href={path}>{name}</a></td>
+  <td>
+    {lastModified !== undefined ? <FormattedDate date={lastModified} /> : "-"}
+  </td>
+  <td>{toHumanReadableSize(fileSize) ?? "-"}</td>
+  <td>{description ?? "-"}</td>
+</tr>

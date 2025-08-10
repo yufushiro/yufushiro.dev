@@ -1,0 +1,21 @@
+---
+import { Temporal } from "temporal-polyfill";
+import { LOCAL_TIMEZONE } from "../consts";
+
+interface Props {
+  pubDate: Temporal.Instant;
+}
+
+const { pubDate } = Astro.props;
+
+const localPubDate = pubDate.toZonedDateTimeISO(LOCAL_TIMEZONE);
+---
+
+<small>
+  Copyright © {localPubDate.year} yufushiro. Except where otherwise noted, content
+  on this site is licensed under the <a
+    href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0 License</a
+  >, and code samples are licensed under the <a
+    href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a
+  >.
+</small>

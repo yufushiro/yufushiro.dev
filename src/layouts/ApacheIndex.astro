@@ -1,0 +1,20 @@
+---
+import Footer from "../components/apache/Footer.astro";
+import Simple from "./Simple.astro";
+
+interface Props {
+  path: string;
+}
+
+const { path } = Astro.props;
+---
+
+<Simple title={`Index of ${path}`} titleRaw>
+  <main>
+    <h1>Index of {path}</h1>
+    <slot />
+  </main>
+  <footer>
+    <Footer />
+  </footer>
+</Simple>

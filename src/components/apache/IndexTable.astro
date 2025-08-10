@@ -1,0 +1,41 @@
+<div class="index-table-outer">
+  <table class="index-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Last Modified</th>
+        <th>Size</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <th colspan="5"><hr /></th>
+      </tr>
+    </thead>
+    <tbody>
+      <slot />
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5"><hr /></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<style>
+  .index-table-outer {
+    overflow-x: auto;
+  }
+
+  .index-table {
+    width: max-content;
+    border-collapse: collapse;
+
+    & :global(th),
+    & :global(td) {
+      text-align: start;
+      padding-inline-end: 0.5rem;
+    }
+  }
+</style>

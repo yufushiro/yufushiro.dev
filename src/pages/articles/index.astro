@@ -1,0 +1,69 @@
+---
+import { getCollection } from "astro:content";
+import { Temporal } from "temporal-polyfill";
+import IndexRow from "../../components/apache/IndexRow.astro";
+import IndexTable from "../../components/apache/IndexTable.astro";
+import ApacheIndex from "../../layouts/ApacheIndex.astro";
+import IconBack from "../../components/apache/IconBack.astro";
+import IconText from "../../components/apache/IconText.astro";
+import IconLink from "../../components/apache/IconLink.astro";
+
+const posts = (await getCollection("articles")).sort((a, b) =>
+  Temporal.Instant.compare(b.data.pubDate, a.data.pubDate),
+);
+---
+
+<ApacheIndex path="/articles">
+  <IndexTable>
+    <IndexRow name="Parent Directory" path="..">
+      <IconBack slot="icon" />
+    </IndexRow>
+    {
+      posts.map((post) => (
+        <IndexRow
+          name={post.id}
+          path={`/articles/${post.id}/`}
+          lastModified={Temporal.Instant.from(
+            post.data.updatedDate ?? post.data.pubDate,
+          )}
+          filePath={post.filePath}
+          description={post.data.title}
+        >
+          <IconText slot="icon" />
+        </IndexRow>
+      ))
+    }
+    <IndexRow
+      name="20241228_ciede2000"
+      path="https://zenn.dev/yufushiro/articles/c5b1a7ed6ad5cd"
+      lastModified={Temporal.Instant.from("2024-12-28T00:00:00+0900")}
+      description="CIEDE2000を使って温泉むすめのカラーを比較する"
+    >
+      <IconLink slot="icon" />
+    </IndexRow>
+    <IndexRow
+      name="20220904_rural-nft"
+      path="https://zenn.dev/yufushiro/articles/ab9dbdcc6513ce"
+      lastModified={Temporal.Instant.from("2024-10-26T00:00:00+0900")}
+      description="ルーラNFTの中身を探ってみた"
+    >
+      <IconLink slot="icon" />
+    </IndexRow>
+    <IndexRow
+      name="20210820_vue-custom-event-prevent"
+      path="https://zenn.dev/yufushiro/articles/12d1db1f390f05"
+      lastModified={Temporal.Instant.from("2021-10-16T00:00:00+0900")}
+      description="Vueのカスタムイベントで .prevent する"
+    >
+      <IconLink slot="icon" />
+    </IndexRow>
+    <IndexRow
+      name="20210613_wireshark-utf8-ssid"
+      path="https://zenn.dev/yufushiro/articles/47c72c2c09e257"
+      lastModified={Temporal.Instant.from("2021-06-13T00:00:00+0900")}
+      description="WiresharkでUTF-8文字を含むSSIDの無線LAN通信の復号でつまづいた話"
+    >
+      <IconLink slot="icon" />
+    </IndexRow>
+  </IndexTable>
+</ApacheIndex>
