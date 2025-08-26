@@ -59,5 +59,11 @@ const { Content } = await render(post);
       border-radius: 0.5rem;
       padding: 1rem;
     }
+
+    & :global(img) {
+      border: 1px solid #ccc;
+      max-width: 100%;
+      height: auto;
+    }
   }
 </style>
