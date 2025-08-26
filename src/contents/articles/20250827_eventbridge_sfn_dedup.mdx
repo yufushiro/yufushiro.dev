@@ -1,0 +1,143 @@
+---
+title: "Amazon EventBridge + Step Functions ではイベントの重複を気にしなくていい（かもしれない）"
+pubDate: "2025-08-27T04:35:00+0900"
+---
+
+import { Image } from "astro:assets";
+
+## 要約
+
+EventBridge + Step Functions の構成では Step Functions の実行 ID に EventBridge のイベント ID が使われており、もしイベントが重複して配信されたとしても実行 ID の重複によるエラーで失敗するため重複排除用に特別な設計をする必要はなさそうです。
+ただし、公式ドキュメントに明文化されていない挙動を前提としているため将来的に変更される可能性があることに注意が必要です。
+
+## EventBridge の一般的な考慮事項
+
+Amazon EventBridge (旧称: CloudWatch Events) によるイベント配信は「少なくとも1回の配信 (at-least-once delivery)」[^1]という説明がされており、使用する際には同じイベントが重複して配信される場合がある[^2]ことを考慮した設計にする必要があります。
+
+例えば Step Functions を一定間隔で定期実行したい場合に、EventBridge Scheduler で cron 式を設定してイベントのトリガーに Step Functions の ARN を設定するというシンプルな構成が考えられます。
+このとき、もしイベントが重複して配信されて Step Functions が意図せず複数回呼び出されたらどうなるでしょうか？
+
+## サンプル構成
+
+無料利用枠で収まる感じの簡単な構成で試します（ケチ
+
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EventBridge Scheduler + Step Functions example
+
+Resources:
+  # EventBridge Schedule の例
+  MySchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: MyStepFunctionSchedule
+      Description: Step Functions を 5 分ごとに呼び出すスケジュール
+      ScheduleExpression: "rate(5 minute)"
+      State: ENABLED
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Target:
+        Arn: !Ref MyStateMachine # ターゲットとなる Step Function
+        RoleArn: !GetAtt SchedulerRole.Arn
+
+  # Step Functions の例
+  MyStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: MySimpleStateMachine
+      StateMachineType: STANDARD
+      RoleArn: !GetAtt StateMachineRole.Arn
+      DefinitionString: |
+        {
+          "StartAt": "PassState",
+          "States": {
+            "PassState": {
+              "Type": "Pass",
+              "Result": {
+                "message": "Hello from EventBridge Scheduler!"
+              },
+              "End": true
+            }
+          }
+        }
+
+  # 各サービスで使う IAM role を定義
+  SchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowStepFunctionsInvoke
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: states:StartExecution
+                Resource: !Ref MyStateMachine
+  StateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+            Action: sts:AssumeRole
+```
+
+## 実際どうなのか
+
+実際に上記の構成を使って EventBridge Scheduler 経由で Step Functions が実行された履歴を見てみましょう。
+
+<Image
+  src={import("../../assets/contents/screenshot-invoke-sfn-from-scheduler.png")}
+  alt="Step Functions 実行履歴のスクリーンショット"
+  width={500}
+  densities={[2]}
+  quality="max"
+  format="png"
+  style={{ border: "1px solid #ccc" }}
+/>
+
+この実行履歴では `fb68ade8-34a1-4242-9a5b-0332bd22ca1e` という実行 ID で Step Functions が実行されています。
+そして実行時に入力された JSON を見てみると、EventBridge Scheduler から渡されたイベントの ID も同じ `fb68ade8-34a1-4242-9a5b-0332bd22ca1e` であることが分かります。
+この事から、どうやら EventBridge のイベント ID と同じ文字列が Step Functions の実行 ID にも使われていると推測できます。
+（この挙動について、公式ドキュメントから明文化された仕様は確認できませんでした）
+
+この推測が正しいとすると、もし EventBridge Scheduler で同じイベントが重複して配信された場合はどうなるでしょうか？
+
+Step Functions の仕様では、同一の実行 ID を指定して複数回実行しようとすると ExecutionAlreadyExists エラーが返されて失敗します[^3]。
+もし EventBridge Scheduler から重複してイベントが配信された場合は Step Functions の実行に成功するのは最初の 1 回だけで、その後の実行は ID の重複によるエラーで失敗することになります。
+このことから、EventBridge と Step Functions を組み合わせた構成では、イベントの重複排除のために特別な設計をする必要はなさそうだという結論になります。
+
+## 気掛かりな点
+
+この結論に至る過程で、いくつか明文化されていない挙動を前提としていることに注意が必要です。
+
+- EventBridge から重複してイベントが配信された場合にイベント ID が同一であること
+  - EventBridge のイベントに含まれる `"id"` フィールド[^4] が重複排除のために使える値であるかどうかは明文化されていません
+- EventBridge のイベント ID と Step Functions の実行 ID が同じ文字列であること
+  - Step Functions の実行 ID には EventBridge のイベント ID が使われているように見えますが、この挙動は明文化されていません
+
+そのため、これらの挙動が将来的に変更されることで壊れたとしても許容できるような場合にのみこの方法を採用することをおすすめします。
+
+[^1]: [特徴 - Amazon EventBridge | AWS](https://aws.amazon.com/jp/eventbridge/features/#topic-0)
+
+[^2]: [Amazon EventBridge のトラブルシューティング - Amazon EventBridge](https://docs.aws.amazon.com/ja_jp/eventbridge/latest/userguide/eb-troubleshooting.html#eb-rule-triggered-more-than-once)
+
+[^3]: [StartExecution - AWS Step Functions](https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartExecution.html#API_StartExecution_Errors)
+
+[^4]: [AWS service event metadata - Amazon EventBridge](https://docs.aws.amazon.com/eventbridge/latest/ref/events-structure.html#event-metadata-ref-id)
