@@ -7,7 +7,8 @@ import { Image } from "astro:assets";
 
 ## 要約
 
-EventBridge + Step Functions の構成では Step Functions の実行 ID に EventBridge のイベント ID が使われており、もしイベントが重複して配信されたとしても実行 ID の重複によるエラーで失敗するため重複排除用に特別な設計をする必要はなさそうです。
+EventBridge + Step Functions の構成では Step Functions の実行 ID に EventBridge のイベント ID が使われており、もしイベントが重複して配信されたとしても実行 ID の重複によるエラーで失敗します。
+そのため重複排除用に特別な設計をする必要はなさそうです。
 ただし、公式ドキュメントに明文化されていない挙動を前提としているため将来的に変更される可能性があることに注意が必要です。
 
 ## EventBridge の一般的な考慮事項
@@ -116,11 +117,9 @@ Resources:
 この事から、どうやら EventBridge のイベント ID と同じ文字列が Step Functions の実行 ID にも使われていると推測できます。
 （この挙動について、公式ドキュメントから明文化された仕様は確認できませんでした）
 
-この推測が正しいとすると、もし EventBridge Scheduler で同じイベントが重複して配信された場合はどうなるでしょうか？
-
 Step Functions の仕様では、同一の実行 ID を指定して複数回実行しようとすると ExecutionAlreadyExists エラーが返されて失敗します[^3]。
 もし EventBridge Scheduler から重複してイベントが配信された場合は Step Functions の実行に成功するのは最初の 1 回だけで、その後の実行は ID の重複によるエラーで失敗することになります。
-このことから、EventBridge と Step Functions を組み合わせた構成では、イベントの重複排除のために特別な設計をする必要はなさそうだという結論になります。
+このことから、EventBridge と Step Functions を組み合わせた構成では、イベントの重複排除のために特別な設計をする必要はないといえそうです。
 
 ## 気掛かりな点
 
