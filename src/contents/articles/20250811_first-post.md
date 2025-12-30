@@ -1,5 +1,6 @@
 ---
 title: "yufushiro.dev の Web サイトを公開"
+author: yufushiro
 pubDate: "2025-08-11T03:28:00+0900"
 ---
 

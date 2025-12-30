@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import { Temporal } from "temporal-polyfill";
+import IndexRow from "../../components/apache/IndexRow.astro";
+import IndexTable from "../../components/apache/IndexTable.astro";
+import ApacheIndex from "../../layouts/ApacheIndex.astro";
+import IconBack from "../../components/apache/IconBack.astro";
+import IconText from "../../components/apache/IconText.astro";
+
+const authors = (await getCollection("authors")).sort((a, b) =>
+  // 名前の昇順でソートする
+  a.id < b.id ? -1 : 1,
+);
+---
+
+<ApacheIndex path="/authors">
+  <IndexTable>
+    <IndexRow name="Parent Directory" path="..">
+      <IconBack slot="icon" />
+    </IndexRow>
+    {
+      authors.map((author) => (
+        <IndexRow
+          name={author.id}
+          path={`/authors/${author.id}/`}
+          lastModified={Temporal.Instant.from(
+            author.data.updatedDate ?? author.data.pubDate,
+          )}
+          filePath={author.filePath}
+          description={author.data.title}
+        >
+          <IconText slot="icon" />
+        </IndexRow>
+      ))
+    }
+  </IndexTable>
+</ApacheIndex>

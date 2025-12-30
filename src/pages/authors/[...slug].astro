@@ -1,27 +1,20 @@
 ---
-import {
-  type CollectionEntry,
-  getCollection,
-  getEntry,
-  render,
-} from "astro:content";
+import { type CollectionEntry, getCollection, render } from "astro:content";
 import Simple from "../../layouts/Simple.astro";
-import FormattedDate from "../../components/FormattedDate.astro";
 import CopyrightNotice from "../../components/CopyrightNotice.astro";
 import { Temporal } from "temporal-polyfill";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("articles");
+  const posts = await getCollection("authors");
   return posts.map((post) => ({
     params: { slug: post.id },
     props: post,
   }));
 }
-type Props = CollectionEntry<"articles">;
+type Props = CollectionEntry<"authors">;
 
 const post = Astro.props;
 const pubDate = Temporal.Instant.from(post.data.pubDate);
-const author = await getEntry(post.data.author);
 const { Content } = await render(post);
 ---
 
@@ -36,13 +29,6 @@ const { Content } = await render(post);
     <article>
       <header>
         <h1>{post.data.title}</h1>
-        <div>
-          Author:
-          <a href={`/authors/${author.id}/`} rel="author">{author.data.name}</a>
-        </div>
-        <div>
-          Date: <FormattedDate date={pubDate} withTime />
-        </div>
       </header>
       <div class="content">
         <Content />
@@ -64,16 +50,16 @@ const { Content } = await render(post);
   .content {
     line-height: 1.8;
 
-    & :global(pre.astro-code) {
-      border: 1px solid #666;
-      border-radius: 0.5rem;
-      padding: 1rem;
+    & :global(dfn) {
+      font-style: normal;
     }
 
-    & :global(img) {
-      border: 1px solid #ccc;
-      max-width: 100%;
-      height: auto;
+    & :global(dt) {
+      font-weight: bold;
+    }
+
+    & :global(dd > p) {
+      margin: 0;
     }
   }
 </style>
