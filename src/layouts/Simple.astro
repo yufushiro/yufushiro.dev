@@ -13,6 +13,7 @@ const { title, titleRaw } = Astro.props;
 <html lang="ja">
   <head>
     <BaseHead title={titleRaw ? title : `${title} | yufushiro.dev`} />
+    <slot name="head" />
   </head>
   <body>
     <slot />

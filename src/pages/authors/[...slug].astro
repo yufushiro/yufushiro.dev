@@ -3,6 +3,9 @@ import { type CollectionEntry, getCollection, render } from "astro:content";
 import Simple from "../../layouts/Simple.astro";
 import CopyrightNotice from "../../components/CopyrightNotice.astro";
 import { Temporal } from "temporal-polyfill";
+import JsonLd from "../../components/JsonLd.astro";
+import type { ProfilePage, WithContext } from "schema-dts";
+import { generateJsonLdPerson } from "../../jsonld";
 
 export async function getStaticPaths() {
   const posts = await getCollection("authors");
@@ -15,10 +18,25 @@ type Props = CollectionEntry<"authors">;
 
 const post = Astro.props;
 const pubDate = Temporal.Instant.from(post.data.pubDate);
+const updatedDate =
+  post.data.updatedDate !== undefined
+    ? Temporal.Instant.from(post.data.updatedDate)
+    : undefined;
 const { Content } = await render(post);
+
+const profileJsonLd: WithContext<ProfilePage> = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: generateJsonLdPerson(Astro, post),
+  dateCreated: pubDate.toString(),
+  dateModified: updatedDate?.toString(),
+};
 ---
 
 <Simple title={post.data.title}>
+  <Fragment slot="head">
+    <JsonLd data={profileJsonLd} />
+  </Fragment>
   <header>
     <nav>
       <a href="../">[index]</a>

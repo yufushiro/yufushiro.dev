@@ -1,15 +1,29 @@
 ---
-import "../styles/global.css";
+import type { WithContext, WebSite } from "schema-dts";
 import { SITE_TITLE } from "../consts";
+import "../styles/global.css";
+import JsonLd from "./JsonLd.astro";
+import { getEntry } from "astro:content";
+import { generateJsonLdPerson } from "../jsonld";
 
 interface Props {
   title: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const authorURL = new URL("/authors/yufushiro", Astro.site);
+
+const author = await getEntry("authors", "yufushiro")!;
+const authorURL = new URL(`/authors/${author.id}`, Astro.site);
 
 const { title } = Astro.props;
+
+const websiteJson: WithContext<WebSite> = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_TITLE,
+  url: Astro.site?.toString(),
+  author: generateJsonLdPerson(Astro, author),
+};
 ---
 
 <meta charset="utf-8" />
@@ -29,3 +43,5 @@ const { title } = Astro.props;
   title={SITE_TITLE}
   href="/rss.xml"
 />
+
+<JsonLd data={websiteJson} />
