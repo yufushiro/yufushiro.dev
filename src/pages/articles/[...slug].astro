@@ -9,6 +9,9 @@ import Simple from "../../layouts/Simple.astro";
 import FormattedDate from "../../components/FormattedDate.astro";
 import CopyrightNotice from "../../components/CopyrightNotice.astro";
 import { Temporal } from "temporal-polyfill";
+import JsonLd from "../../components/JsonLd.astro";
+import type { BlogPosting, WithContext } from "schema-dts";
+import { generateJsonLdPerson } from "../../jsonld";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles");
@@ -21,11 +24,28 @@ type Props = CollectionEntry<"articles">;
 
 const post = Astro.props;
 const pubDate = Temporal.Instant.from(post.data.pubDate);
+const updatedDate =
+  post.data.updatedDate !== undefined
+    ? Temporal.Instant.from(post.data.updatedDate)
+    : undefined;
 const author = await getEntry(post.data.author);
 const { Content } = await render(post);
+
+const articleJson: WithContext<BlogPosting> = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  author: generateJsonLdPerson(Astro, author),
+  headline: post.data.title,
+  datePublished: pubDate.toString(),
+  dateModified: updatedDate?.toString(),
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+};
 ---
 
 <Simple title={post.data.title}>
+  <Fragment slot="head">
+    <JsonLd data={articleJson} />
+  </Fragment>
   <header>
     <nav>
       <a href="../">[index]</a>
