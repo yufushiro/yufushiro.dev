@@ -48,7 +48,7 @@ const articleJson: WithContext<BlogPosting> = {
   </Fragment>
   <header>
     <nav>
-      <a href="../">[index]</a>
+      <a href="/articles">[index]</a>
     </nav>
     <hr />
   </header>
@@ -58,7 +58,7 @@ const articleJson: WithContext<BlogPosting> = {
         <h1>{post.data.title}</h1>
         <div>
           Author:
-          <a href={`/authors/${author.id}/`} rel="author">{author.data.name}</a>
+          <a href={`/authors/${author.id}`} rel="author">{author.data.name}</a>
         </div>
         <div>
           Date: <FormattedDate date={pubDate} withTime />
@@ -72,7 +72,7 @@ const articleJson: WithContext<BlogPosting> = {
   <footer>
     <hr />
     <nav>
-      <a href="../">[index]</a>
+      <a href="/articles">[index]</a>
     </nav>
     <p>
       <CopyrightNotice pubDate={pubDate} />

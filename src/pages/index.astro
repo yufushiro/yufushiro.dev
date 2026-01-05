@@ -19,14 +19,14 @@ const articleLastModifiedAt = (await getCollection("articles"))
   <IndexTable>
     <IndexRow
       name="authors"
-      path="authors/"
+      path="/authors"
       lastModified={authorLastModifiedAt}
     >
       <IconFolder slot="icon" />
     </IndexRow>
     <IndexRow
       name="articles"
-      path="articles/"
+      path="/articles"
       lastModified={articleLastModifiedAt}
     >
       <IconFolder slot="icon" />
