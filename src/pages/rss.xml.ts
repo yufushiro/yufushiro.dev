@@ -15,7 +15,7 @@ export const GET: APIRoute = async (context) => {
         title: post.data.title,
         author: authors.find((x) => x.id === post.data.author.id)?.data.name,
         pubDate: new Date(post.data.pubDate),
-        link: `/articles/${post.id}/`,
+        link: `/articles/${post.id}`,
       }),
     ),
   });

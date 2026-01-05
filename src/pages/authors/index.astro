@@ -15,14 +15,14 @@ const authors = (await getCollection("authors")).sort((a, b) =>
 
 <ApacheIndex path="/authors">
   <IndexTable>
-    <IndexRow name="Parent Directory" path="..">
+    <IndexRow name="Parent Directory" path="/">
       <IconBack slot="icon" />
     </IndexRow>
     {
       authors.map((author) => (
         <IndexRow
           name={author.id}
-          path={`/authors/${author.id}/`}
+          path={`/authors/${author.id}`}
           lastModified={Temporal.Instant.from(
             author.data.updatedDate ?? author.data.pubDate,
           )}

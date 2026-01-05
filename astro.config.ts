@@ -5,7 +5,10 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://yufushiro.dev",
   integrations: [mdx(), sitemap()],
-  trailingSlash: "always",
+  build: {
+    format: "file",
+  },
+  trailingSlash: "never",
   markdown: {
     shikiConfig: {
       themes: {
