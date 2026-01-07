@@ -5,12 +5,13 @@ import "../styles/global.css";
 import JsonLd from "./JsonLd.astro";
 import { getEntry } from "astro:content";
 import { generateJsonLdPerson } from "../jsonld";
+import { getCanonicalURL } from "../url";
 
 interface Props {
   title: string;
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const canonicalURL = getCanonicalURL(Astro);
 
 const author = await getEntry("authors", "yufushiro")!;
 const authorURL = new URL(`/authors/${author.id}`, Astro.site);

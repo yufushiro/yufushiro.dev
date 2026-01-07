@@ -12,6 +12,7 @@ import { Temporal } from "temporal-polyfill";
 import JsonLd from "../../components/JsonLd.astro";
 import type { BlogPosting, WithContext } from "schema-dts";
 import { generateJsonLdPerson } from "../../jsonld";
+import { getCanonicalURL } from "../../url";
 
 export async function getStaticPaths() {
   const posts = await getCollection("articles");
@@ -38,7 +39,7 @@ const articleJson: WithContext<BlogPosting> = {
   headline: post.data.title,
   datePublished: pubDate.toString(),
   dateModified: updatedDate?.toString(),
-  url: new URL(Astro.url.pathname, Astro.site).toString(),
+  url: getCanonicalURL(Astro).toString(),
 };
 ---
 
