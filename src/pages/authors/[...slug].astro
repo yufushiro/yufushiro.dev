@@ -27,7 +27,7 @@ const { Content } = await render(post);
 const profileJsonLd: WithContext<ProfilePage> = {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
-  mainEntity: generateJsonLdPerson(Astro, post),
+  mainEntity: await generateJsonLdPerson(Astro, post),
   dateCreated: pubDate.toString(),
   dateModified: updatedDate?.toString(),
 };

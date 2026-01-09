@@ -35,7 +35,7 @@ const { Content } = await render(post);
 const articleJson: WithContext<BlogPosting> = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  author: generateJsonLdPerson(Astro, author),
+  author: await generateJsonLdPerson(Astro, author),
   headline: post.data.title,
   datePublished: pubDate.toString(),
   dateModified: updatedDate?.toString(),

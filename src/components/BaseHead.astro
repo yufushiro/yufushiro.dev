@@ -23,7 +23,7 @@ const websiteJson: WithContext<WebSite> = {
   "@type": "WebSite",
   name: SITE_TITLE,
   url: Astro.site?.toString(),
-  author: generateJsonLdPerson(Astro, author),
+  author: await generateJsonLdPerson(Astro, author),
 };
 ---
 
