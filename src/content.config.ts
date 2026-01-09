@@ -6,10 +6,11 @@ import {
 } from "astro:content";
 import { glob } from "astro/loaders";
 
-const authorsSchema = (_context: SchemaContext) =>
+const authorsSchema = ({ image }: SchemaContext) =>
   z.object({
     name: z.string(),
     title: z.string(),
+    image: image(),
     pubDate: z.coerce.date().transform((date) => date.toISOString()),
     updatedDate: z.coerce
       .date()
