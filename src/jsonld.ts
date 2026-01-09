@@ -9,7 +9,7 @@ export async function generateJsonLdPerson(
   Astro: AstroGlobal,
   author: Author,
 ): Promise<Person> {
-  const profileImage = await getImage({src: author.data.image});
+  const profileImage = await getImage({ src: author.data.image });
 
   return {
     "@type": "Person",
