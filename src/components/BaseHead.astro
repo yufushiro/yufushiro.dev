@@ -9,6 +9,7 @@ import { getCanonicalURL } from "../url";
 
 interface Props {
   title: string;
+  noCanonical?: boolean;
 }
 
 const canonicalURL = getCanonicalURL(Astro);
@@ -16,7 +17,7 @@ const canonicalURL = getCanonicalURL(Astro);
 const author = await getEntry("authors", "yufushiro")!;
 const authorURL = new URL(`/authors/${author.id}`, Astro.site);
 
-const { title } = Astro.props;
+const { title, noCanonical } = Astro.props;
 
 const websiteJson: WithContext<WebSite> = {
   "@context": "https://schema.org",
@@ -34,7 +35,7 @@ const websiteJson: WithContext<WebSite> = {
 <meta name="generator" content={Astro.generator} />
 <meta name="fediverse:creator" content="@yufushiro@m.yufushiro.dev" />
 
-<link rel="canonical" href={canonicalURL} />
+{!noCanonical && <link rel="canonical" href={canonicalURL} />}
 <link rel="me" href="https://m.yufushiro.dev/@yufushiro" />
 <link rel="author" href={authorURL} />
 <link rel="sitemap" href="/sitemap-index.xml" />

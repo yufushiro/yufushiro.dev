@@ -4,15 +4,19 @@ import BaseHead from "../components/BaseHead.astro";
 interface Props {
   title: string;
   titleRaw?: boolean;
+  noCanonical?: boolean;
 }
 
-const { title, titleRaw } = Astro.props;
+const { title, titleRaw, noCanonical } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="ja">
   <head>
-    <BaseHead title={titleRaw ? title : `${title} | yufushiro.dev`} />
+    <BaseHead
+      title={titleRaw ? title : `${title} | yufushiro.dev`}
+      noCanonical={noCanonical}
+    />
     <slot name="head" />
   </head>
   <body>
