@@ -1,14 +1,13 @@
 ---
-import type {Thing, WithContext} from "schema-dts";
+import type { Thing, WithContext } from "schema-dts";
 
 interface Props {
   data: WithContext<Thing>;
 }
 
-const {data} = Astro.props;
+const { data } = Astro.props;
 
-const safeJson = JSON.stringify(data).replace(/</g, '\\u003c');
+const safeJson = JSON.stringify(data).replace(/</g, "\\u003c");
 ---
 
-<script is:inline type="application/ld+json" set:html={safeJson}>
-</script>
+<script is:inline type={"application/ld+json"} set:html={safeJson} />
