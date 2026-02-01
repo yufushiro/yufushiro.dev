@@ -1,8 +1,8 @@
 import {
   defineCollection,
   reference,
-  z,
   type SchemaContext,
+  z,
 } from "astro:content";
 import { glob } from "astro/loaders";
 
