@@ -3,6 +3,7 @@ import type { WithContext, WebSite } from "schema-dts";
 import { SITE_TITLE } from "../consts";
 import "../styles/global.css";
 import JsonLd from "./JsonLd.astro";
+import { getImage } from "astro:assets";
 import { getEntry } from "astro:content";
 import { generateJsonLdPerson } from "../jsonld";
 import { getCanonicalURL } from "../url";
@@ -26,6 +27,11 @@ const websiteJson: WithContext<WebSite> = {
   url: Astro.site?.toString(),
   author: await generateJsonLdPerson(Astro, author),
 };
+
+const profileImagePng = await getImage({
+  src: author.data.image,
+  format: "png",
+});
 ---
 
 <meta charset="utf-8" />
@@ -45,5 +51,6 @@ const websiteJson: WithContext<WebSite> = {
   title={SITE_TITLE}
   href="/rss.xml"
 />
+<link rel="icon" type="image/png" href={profileImagePng.src} />
 
 <JsonLd data={websiteJson} />
