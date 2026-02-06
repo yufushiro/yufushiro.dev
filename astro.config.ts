@@ -10,6 +10,9 @@ export default defineConfig({
   },
   trailingSlash: "never",
   markdown: {
+    syntaxHighlight: {
+      excludeLangs: ["mermaid"],
+    },
     shikiConfig: {
       themes: {
         light: "github-light-high-contrast",

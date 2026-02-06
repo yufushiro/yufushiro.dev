@@ -1,0 +1,42 @@
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    // pre > code.language-mermaid を探してフラットな pre.mermaid に変換する
+    const codeElms = document.querySelectorAll<HTMLElement>(
+      "pre > code.language-mermaid",
+    );
+    for (const codeElem of codeElms) {
+      const preElem = codeElem.parentElement;
+      if (preElem === null || preElem.tagName !== "PRE") {
+        continue;
+      }
+      preElem.classList.add("mermaid");
+      preElem.classList.remove("language-mermaid");
+      preElem.textContent = codeElem.textContent;
+    }
+
+    // mermaid を非同期にインポート・実行する
+    const { default: mermaid } = await import("mermaid");
+    mermaid.initialize({
+      startOnLoad: false,
+      flowchart: {
+        padding: 5,
+      },
+      themeVariables: {
+        fontSize: "14px",
+      },
+    });
+    await mermaid.run({
+      querySelector: "pre.mermaid",
+    });
+  });
+</script>
+
+<style>
+  :global(pre.mermaid) {
+    margin: 0;
+  }
+
+  :global(pre.mermaid > svg) {
+    display: block;
+  }
+</style>
