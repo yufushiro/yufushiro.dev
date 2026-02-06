@@ -2,6 +2,7 @@
 title: "Misskey の適切な trustProxy 設定を考える"
 author: yufushiro
 pubDate: "2026-02-07T05:25:00+0900"
+updateDate: "2026-02-07T06:17:00+0900"
 ---
 
 import MermaidClient from "../../components/MermaidClient.astro";
@@ -172,6 +173,8 @@ trustProxy:
   - "::1/128"
   - "fc00::/7"
 ```
+
+この設定で、例えば `X-Forwarded-For: a.a.a.a, b.b.b.b, 10.0.0.1` を含んだリクエストを受信した場合には `10.0.0.1` は信頼できるリバースプロキシとして認識されるため、その直前にある `b.b.b.b` がアクセス元 IP アドレスとして扱われます。
 
 もし Cloudflare を使用している構成であれば、以下のように Cloudflare の IP アドレスレンジを追加すると良いでしょう。
 これらの IP アドレスは https://www.cloudflare.com/ips/ で公開されています。
