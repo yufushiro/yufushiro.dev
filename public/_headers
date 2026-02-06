@@ -1,0 +1,5 @@
+https://:project.pages.dev/*
+  x-robots-tag: noindex
+
+https://:version.:project.pages.dev/*
+  x-robots-tag: noindex
