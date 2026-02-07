@@ -1,0 +1,39 @@
+.markdown-content {
+  line-height: 1.8;
+
+  h2::before {
+    content: "##";
+    letter-spacing: -0.1em;
+    margin-right: 0.5em;
+  }
+
+  h3::before {
+    content: "###";
+    letter-spacing: -0.1em;
+    margin-right: 0.5em;
+  }
+
+  pre.astro-code {
+    border: 1px solid #666;
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  img {
+    border: 1px solid #ccc;
+    max-width: 100%;
+    height: auto;
+  }
+
+  dfn {
+    font-style: normal;
+  }
+
+  dt {
+    font-weight: bold;
+  }
+
+  dd > p {
+    margin: 0;
+  }
+}
