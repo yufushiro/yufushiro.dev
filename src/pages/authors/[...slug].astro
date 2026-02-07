@@ -7,6 +7,8 @@ import JsonLd from "../../components/JsonLd.astro";
 import type { ProfilePage, WithContext } from "schema-dts";
 import { generateJsonLdPerson } from "../../jsonld";
 
+import "../../styles/markdown.css";
+
 export async function getStaticPaths() {
   const posts = await getCollection("authors");
   return posts.map((post) => ({
@@ -48,7 +50,7 @@ const profileJsonLd: WithContext<ProfilePage> = {
       <header>
         <h1>{post.data.title}</h1>
       </header>
-      <div class="content">
+      <div class="markdown-content">
         <Content />
       </div>
     </article>
@@ -63,21 +65,3 @@ const profileJsonLd: WithContext<ProfilePage> = {
     </p>
   </footer>
 </Simple>
-
-<style>
-  .content {
-    line-height: 1.8;
-
-    & :global(dfn) {
-      font-style: normal;
-    }
-
-    & :global(dt) {
-      font-weight: bold;
-    }
-
-    & :global(dd > p) {
-      margin: 0;
-    }
-  }
-</style>

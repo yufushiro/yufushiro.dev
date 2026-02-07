@@ -14,6 +14,8 @@ import type { BlogPosting, WithContext } from "schema-dts";
 import { generateJsonLdPerson } from "../../jsonld";
 import { getCanonicalURL } from "../../url";
 
+import "../../styles/markdown.css";
+
 export async function getStaticPaths() {
   const posts = await getCollection("articles");
   return posts.map((post) => ({
@@ -65,7 +67,7 @@ const articleJson: WithContext<BlogPosting> = {
           Date: <FormattedDate date={pubDate} withTime />
         </div>
       </header>
-      <div class="content">
+      <div class="markdown-content">
         <Content />
       </div>
     </article>
@@ -80,21 +82,3 @@ const articleJson: WithContext<BlogPosting> = {
     </p>
   </footer>
 </Simple>
-
-<style>
-  .content {
-    line-height: 1.8;
-
-    & :global(pre.astro-code) {
-      border: 1px solid #666;
-      border-radius: 0.5rem;
-      padding: 1rem;
-    }
-
-    & :global(img) {
-      border: 1px solid #ccc;
-      max-width: 100%;
-      height: auto;
-    }
-  }
-</style>
