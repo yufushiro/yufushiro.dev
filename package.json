@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "scripts": {
     "astro": "astro",
+    "typecheck": "astro check",
     "build": "astro build",
     "dev": "astro dev",
     "format": "prettier --write .",
