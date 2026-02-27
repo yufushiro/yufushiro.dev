@@ -20,7 +20,7 @@
     "temporal-polyfill": "^0.3.0"
   },
   "devDependencies": {
-    "mermaid": "^11.12.2",
+    "mermaid": "^11.12.3",
     "postcss-load-config": "^6.0.1",
     "postcss-nesting": "^14.0.0",
     "prettier": "^3.8.1",
