@@ -12,15 +12,15 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
-    "@astrojs/rss": "^4.0.15",
-    "@astrojs/sitemap": "^3.7.0",
-    "astro": "^5.17.1",
+    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/rss": "^4.0.17",
+    "@astrojs/sitemap": "^3.7.1",
+    "astro": "^6.0.4",
     "sharp": "^0.34.5",
-    "temporal-polyfill": "^0.3.0"
+    "temporal-polyfill": "^0.3.2"
   },
   "devDependencies": {
-    "mermaid": "^11.12.3",
+    "mermaid": "^11.13.0",
     "postcss-load-config": "^6.0.1",
     "postcss-nesting": "^14.0.0",
     "prettier": "^3.8.1",
