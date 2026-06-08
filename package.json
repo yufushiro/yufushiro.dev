@@ -12,9 +12,10 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/mdx": "^6.0.2",
     "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.1",
+    "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.3.2",
     "sharp": "^0.34.5",
     "temporal-polyfill": "^0.3.2"
@@ -23,8 +24,8 @@
     "mermaid": "^11.15.0",
     "postcss-load-config": "^6.0.1",
     "postcss-nesting": "^14.0.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
-    "schema-dts": "^1.1.5"
+    "schema-dts": "^2.0.0"
   }
 }
