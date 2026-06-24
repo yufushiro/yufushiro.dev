@@ -1,0 +1,11 @@
+{
+  "name": "Astro Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["astro-build.astro-vscode", "unifiedjs.vscode-mdx"]
+    }
+  }
+}
